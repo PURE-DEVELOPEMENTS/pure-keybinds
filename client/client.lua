@@ -94,7 +94,7 @@ local function openKeybindMenu()
     print("^3[KeyBind] Opening keybind menu...")
     if not MenuData then
         print("^1[KeyBind] MenuData is nil!")
-        RSGCore.Functions.Notify("Системата не е заредила!", "error")
+        RSGCore.Functions.Notify("Please wait for the system to initialize or relog!", "error")
         return
     end
     print("^3[KeyBind] MenuData is available, creating menu...")
@@ -102,7 +102,7 @@ local function openKeybindMenu()
     local menu = {
         title = "PURE KEYBINDS",
         elements = {
-            { label = "Система за Keybinds", type = "label" }
+            { label = "Keybinds System", type = "label" }
         }
     }
     
@@ -115,13 +115,13 @@ local function openKeybindMenu()
             type = "button"
         })
     end
-    
-    table.insert(menu.elements, { label = "Добавете нов бърз бутон", value = "add_new", type = "button" })
+
+    table.insert(menu.elements, { label = "Add New Keybind", value = "add_new", type = "button" })
     if #playerKeyBinds > 0 then
-        table.insert(menu.elements, { label = "Премахнете всички добавени", value = "remove_all", type = "button" })
+        table.insert(menu.elements, { label = "Remove All Added", value = "remove_all", type = "button" })
     end
-    table.insert(menu.elements, { label = "Затвори Меню", value = "close", type = "button" })
-    
+    table.insert(menu.elements, { label = "Close Menu", value = "close", type = "button" })
+
     MenuData.Open('default', 'keybind_system', 'main_menu', {
         title = menu.title,
         elements = menu.elements
@@ -168,9 +168,9 @@ function openAddBindMenu()
     end
     
     local menu = {
-        title = "Изберете бутон за тази функция",
+        title = "Choose a Key",
         elements = {
-            { label = "Изберете бутон (LALT + бутона, ще започва тази функция)", type = "label" }
+            { label = "Select a button (LALT + this button will trigger this command)", type = "label" }
         }
     }
     
@@ -186,9 +186,9 @@ function openAddBindMenu()
             table.insert(menu.elements, { label = keyName, value = "key_" .. keyName, type = "button" })
         end
     end
-    
-    table.insert(menu.elements, { label = "Върнете се в менюто", value = "back", type = "button" })
-    
+
+    table.insert(menu.elements, { label = "Back to Menu", value = "back", type = "button" })
+
     MenuData.Open('default', 'keybind_system', 'add_bind_menu', {
         title = menu.title,
         elements = menu.elements
@@ -216,22 +216,22 @@ end
 -- Function to open command input menu
 function openCommandInputMenu(selectedKey)
     local input = exports['rsg-input']:ShowInput({
-        header = "Напишете чат командата",
+        header = "Enter Chat Command",
         submitText = "Save Binding",
         inputs = {
             {
-                text = string.format("Сдвояване на: LALT + %s", selectedKey),
+                text = string.format("Binding: LALT + %s", selectedKey),
                 name = "info",
                 type = "text",
                 isRequired = false,
                 disabled = true
             },
             {
-                text = "Командата (без /):",
+                text = "Command (without /):",
                 name = "command",
                 type = "text",
                 isRequired = true,
-                placeholder = "Пример: me waves"
+                placeholder = "Example: me waves"
             }
         }
     })
@@ -240,9 +240,9 @@ function openCommandInputMenu(selectedKey)
         local command = input.command
         if command and command ~= "" then
             TriggerServerEvent('keybind:savePlayerBind', { key = selectedKey, command = command })
-            RSGCore.Functions.Notify("Успешно добавен!", "success")
+            RSGCore.Functions.Notify("Successfully added!", "success")
         else
-            RSGCore.Functions.Notify("Моля въведете команда!", "error")
+            RSGCore.Functions.Notify("Please enter a command!", "error")
         end
     end
     -- Always return to main menu after input
@@ -266,13 +266,13 @@ function openEditBindMenu(bindIndex)
     end
     
     local menu = {
-        title = "Промяна на бърз бутон",
+        title = "Edit Keybind",
         elements = {
-            { label = string.format("Променяне на бърз бутон: LALT + %s", bind.key), type = "label" },
-            { label = "Сегашна команда: " .. bind.command, type = "label" },
-            { label = "Промени команда", value = "update", type = "button" },
-            { label = "Премахни", value = "remove", type = "button" },
-            { label = "Назад", value = "back", type = "button" }
+            { label = string.format("Editing Keybind: LALT + %s", bind.key), type = "label" },
+            { label = "Current Command: " .. bind.command, type = "label" },
+            { label = "Change Command", value = "update", type = "button" },
+            { label = "Remove", value = "remove", type = "button" },
+            { label = "Back", value = "back", type = "button" }
         }
     }
     
@@ -290,18 +290,18 @@ function openEditBindMenu(bindIndex)
             menu.close()
             -- Use rsg-input for command editing
             local input = exports['rsg-input']:ShowInput({
-                header = "Промени команда",
-                submitText = "Промени команда",
+                header = "Edit Command",
+                submitText = "Change Command",
                 inputs = {
                     {
-                        text = string.format("Променяне на: LALT + %s", bind.key),
+                        text = string.format("Editing: LALT + %s", bind.key),
                         name = "info",
                         type = "text",
                         isRequired = false,
                         disabled = true
                     },
                     {
-                        text = "Нова команда (без /):",
+                        text = "New Command (without /):",
                         name = "command",
                         type = "text",
                         isRequired = true,
@@ -315,9 +315,9 @@ function openEditBindMenu(bindIndex)
                 local command = input.command
                 if command and command ~= "" then
                     TriggerServerEvent('keybind:updatePlayerBind', bindIndex, command)
-                    RSGCore.Functions.Notify("Успешно променен!", "success")
+                    RSGCore.Functions.Notify("Successfully updated!", "success")
                 else
-                    RSGCore.Functions.Notify("Моля въведете команда!", "error")
+                    RSGCore.Functions.Notify("Please enter a command!", "error")
                 end
             end
             -- Return to main menu after input
@@ -325,7 +325,7 @@ function openEditBindMenu(bindIndex)
         elseif data.current.value == "remove" then
             TriggerServerEvent('keybind:removePlayerBind', bindIndex)
             menu.close()
-            RSGCore.Functions.Notify("Бърз бутон премахнат!", "success")
+            RSGCore.Functions.Notify("Keybind removed!", "success")
         elseif data.current.value == "back" then
             menu.close()
             openKeybindMenu()
@@ -346,10 +346,10 @@ function openConfirmRemoveAllMenu()
     local menu = {
         title = "Confirm Removal",
         elements = {
-            { label = "Сигурни ли сте, че искате да премахнете всички?", type = "label" },
-            { label = "Това не може да бъде възстановено!", type = "label" },
-            { label = "Да, Премахни всички", value = "confirm", type = "button" },
-            { label = "Не, Откажи се", value = "cancel", type = "button" }
+            { label = "Are you sure you want to remove all?", type = "label" },
+            { label = "This cannot be undone!", type = "label" },
+            { label = "Yes, Remove All", value = "confirm", type = "button" },
+            { label = "No, Cancel", value = "cancel", type = "button" }
         }
     }
     
@@ -366,7 +366,7 @@ function openConfirmRemoveAllMenu()
         if data.current.value == "confirm" then
             TriggerServerEvent('keybind:removeAllPlayerBinds')
             menu.close()
-            RSGCore.Functions.Notify("Всички Бързи бутони нулирани!", "success")
+            RSGCore.Functions.Notify("All keybinds removed!", "success")
         elseif data.current.value == "cancel" then
             menu.close()
             openKeybindMenu()
@@ -464,7 +464,7 @@ RegisterNetEvent('keybind:openMenu', function()
         openKeybindMenu()
     else
         print("^1[KeyBind] Player data not ready!")
-        RSGCore.Functions.Notify("Трябва да релогнете!", "error")
+        RSGCore.Functions.Notify("You need to relog!", "error")
     end
 end)
 
